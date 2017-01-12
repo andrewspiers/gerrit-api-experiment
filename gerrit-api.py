@@ -6,12 +6,12 @@ import logging
 import os
 import sys
 
-
+from flask import Flask
 import requests
 from requests.auth import HTTPDigestAuth
 
 logging.basicConfig(level=os.getenv('GERRIT_API_LOGLEVEL', logging.INFO))
-
+app = Flask(__name__)
 
 config_file = os.getenv(
     'GERRIT_API_CONF',
@@ -60,8 +60,20 @@ def open_changes(conf):
     return(len(j))
 
 
+@app.route("/")
+def out_open_changes():
+    counter = str(open_changes(conf))
+    return "There are {} open changes in gerrit.\n".format(counter)
+
+
+@app.route("/open-changes")
+def out_open_changes_2():
+    counter = str(open_changes(conf))
+    return "There are {} open changes in gerrit.\n".format(counter)
+
+
 def main():
-    print (str(open_changes(conf)))
+    app.run()
 
 if __name__ == "__main__":
     main()
